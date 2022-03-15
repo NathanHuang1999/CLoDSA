@@ -8,21 +8,19 @@ from imutils import paths
 import os
 import cv2
 from joblib import Parallel, delayed
-import psutil
 
 
 def readAndGenerateImageSegmentation(outputPath, transformers, labelextension, i_and_imagePath):
     (i, imagePath) = i_and_imagePath
     image = cv2.imread(imagePath)
-    name = imagePath.split(os.path.sep)[-1]
-    labelPath = os.path.join(os.sep.join(imagePath.split(os.path.sep)[:-2]), "labels") + os.sep +  name[0:name.rfind(".")] + labelextension
-
+    name = imagePath.split("/")[-1]
+    labelPath = '/'.join(imagePath.split("/")[:-2]) + "/labels/" + name[0:name.rfind(".")] + labelextension
     label = cv2.imread(labelPath)
 
     for (j, transformer) in enumerate(transformers):
-        (newimage, newlabel) = transformer.transform(image,label)
-        # print(newimage.shape, newlabel.shape)
-        cv2.imwrite(outputPath +  "images/" + str(i) + "_" + str(j) + "_" + name,
+        (newimage,newlabel) = transformer.transform(image,label)
+
+        cv2.imwrite(outputPath + "images/" + str(i) + "_" + str(j) + "_" + name,
                     newimage)
         cv2.imwrite(outputPath + "labels/" + str(i) + "_" + str(j) + "_" + name[0:name.rfind(".")]+labelextension,
                     newlabel)
