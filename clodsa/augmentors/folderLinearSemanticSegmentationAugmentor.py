@@ -8,6 +8,7 @@ from imutils import paths
 import os
 import cv2
 from joblib import Parallel, delayed
+import psutil
 
 
 def readAndGenerateImageSegmentation(outputPath, transformers, labelextension, i_and_imagePath):
@@ -45,8 +46,8 @@ class FolderLinearSemanticSegmentationAugmentor(IAugmentor):
     def __init__(self,inputPath,parameters):
         IAugmentor.__init__(self)
         self.inputPath = inputPath
-        self.imagesPath = os.path.join(inputPath, "images") + os.sep
-        self.labelsPath = os.path.join(inputPath, "labels") + os.sep
+        self.imagesPath = "/".join((inputPath, "images/"))
+        self.labelsPath = "/".join((inputPath, "labels/"))
         # output path represents the folder where the images will be stored
         if parameters["outputPath"]:
             self.outputPath = parameters["outputPath"]
@@ -56,10 +57,10 @@ class FolderLinearSemanticSegmentationAugmentor(IAugmentor):
             self.labelsExtension = parameters["labelsExtension"]
         else:
             self.labelsExtension = ".tiff"
-        if not os.path.exists(os.path.join(self.outputPath,"images")):
-            os.makedirs(os.path.join(self.outputPath,"images"))
-        if not os.path.exists(os.path.join(self.outputPath,"labels")):
-            os.makedirs(os.path.join(self.outputPath,"labels"))
+        if not os.path.exists("/".join((self.outputPath,"images/"))):
+            os.makedirs("/".join((self.outputPath,"images/")))
+        if not os.path.exists("/".join((self.outputPath,"labels/"))):
+            os.makedirs("/".join((self.outputPath,"labels/")))
 
     def readImagesAndAnnotations(self):
         self.imagePaths = list(paths.list_files(self.imagesPath,validExts=(".jpg", ".jpeg", ".png", ".bmp",".tiff",".tif")))
